@@ -1,5 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
+import Crypto
+import Crypto.Random
+from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
+import binascii
 
 
 class Transaction:
@@ -37,8 +41,16 @@ def ViewTransactions():
 @app.route("/wallet/new")
 
 def new_wallet():
-    return ""
 
+    random_gen = Crypto.Random.new().read
+    Private_key = RSA.generate(1024, random_gen)
+    Public_key = Private_key.publickey()
+    # naming in the response has to match the template
+    response = {
+        'Private_key': binascii.hexlify(Private_key.export_key(format("DER"))).decode('ascii'),
+        'Publick_key': binascii.hexlify(Public_key.export_key(format("DER"))).decode('ascii')
+    }
+    return jsonify(response),200
 if __name__ == '__main__':
 
    parser = ArgumentParser()

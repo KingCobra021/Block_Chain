@@ -81,9 +81,9 @@
                     type:'GET',
                     success:function(response){
                         document.getElementById("public_key").innerHTML =
-                            response['public_key']
+                            response['Public_key']
                         document.getElementById("private_key").innerHTML =
-                            response['private_key']
+                            response['Private_key']
                         document.getElementById("warning").style.display = "block";
                     },
                     error:function(error){
