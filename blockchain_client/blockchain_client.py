@@ -5,7 +5,8 @@ from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
 import binascii
 from collections import OrderedDict
-
+from Crypto.Signature import PKCS1_v1_5 as PKC
+from Crypto.Hash import SHA256 as SHA
 
 class Transaction:
     def __init__(self, sender_public_key, sender_private_key, recipient_public_key, amount):
@@ -20,7 +21,12 @@ class Transaction:
             'recipient_public_key': self.recipient_public_key,
             'amount':self.amount
         })
+    def sign_transaction(self):
+        private_key = RSA.importKey(binascii.unhexlify(self.sender_private_key))
+        signer = PKC.new(private_key)
+        hash = SHA.new(str(self.to_dict()).encode('utf8'))
 
+        return binascii.hexlify(signer.sign(hash)).decode('ascii')
 
 #initiating the node
 app = Flask(__name__)
@@ -47,7 +53,7 @@ def generate_transactions():
     recipient_public_key = request.form['recipient_public_key']
     amount = request.form['amount']
     transaction = Transaction(sender_public_key, sender_private_key, recipient_public_key, amount)
-    response = {'transaction':transaction.to_dict(), 'signatures':'ABCD'}
+    response = {'transaction':transaction.to_dict(), 'signature':transaction.sign_transaction()}
     return jsonify(response), 200
 @app.route("/view/transactions")
 
@@ -64,7 +70,7 @@ def new_wallet():
     # naming in the response has to match the template
     response = {
         'Private_key': binascii.hexlify(Private_key.export_key(format("DER"))).decode('ascii'),
-        'Publick_key': binascii.hexlify(Public_key.export_key(format("DER"))).decode('ascii')
+        'Public_key': binascii.hexlify(Public_key.export_key(format("DER"))).decode('ascii')
     }
     return jsonify(response),200
 if __name__ == '__main__':
