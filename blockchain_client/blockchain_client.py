@@ -1,9 +1,10 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import Crypto
 import Crypto.Random
 from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
 import binascii
+from collections import OrderedDict
 
 
 class Transaction:
@@ -12,7 +13,13 @@ class Transaction:
         self.sender_private_key = sender_private_key
         self.recipient_public_key = recipient_public_key
         self.amount = amount
+    def to_dict(self):
 
+        return OrderedDict({
+            'sender_public_key':self.sender_public_key,
+            'recipient_public_key': self.recipient_public_key,
+            'amount':self.amount
+        })
 
 
 #initiating the node
@@ -32,7 +39,16 @@ def Home():
 
 def MakeTransactions():
     return render_template("./make_transactions.html")
+@app.route("/generate/transactions", methods = ['POST'])
 
+def generate_transactions():
+    sender_public_key = request.form['sender_public_key']
+    sender_private_key = request.form['sender_private_key']
+    recipient_public_key = request.form['recipient_public_key']
+    amount = request.form['amount']
+    transaction = Transaction(sender_public_key, sender_private_key, recipient_public_key, amount)
+    response = {'transaction':transaction.to_dict(), 'signatures':'ABCD'}
+    return jsonify(response), 200
 @app.route("/view/transactions")
 
 def ViewTransactions():
