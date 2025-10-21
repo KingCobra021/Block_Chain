@@ -183,7 +183,7 @@
                         document.getElementById('confirmation_recipient_public_key').value = response['transaction']['recipient_public_key'];
                         document.getElementById('confirmation_amount').value = response['transaction']['amount'];
                         document.getElementById('transaction_signature').value = response['transaction']['signature'];
-                        $('#basic_modal').model('show');
+                        $('#basic_modal').modal('show');
                     },
                     error:function (error){
                         console.log(error)
