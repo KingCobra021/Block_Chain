@@ -182,7 +182,7 @@
                         document.getElementById('confirmation_sender_public_key').value = response['transaction']['sender_public_key'];
                         document.getElementById('confirmation_recipient_public_key').value = response['transaction']['recipient_public_key'];
                         document.getElementById('confirmation_amount').value = response['transaction']['amount'];
-                        document.getElementById('transaction_signature').value = response['transaction']['signature'];
+                        document.getElementById('transaction_signature').value = response['signature'];
                         $('#basic_modal').modal('show');
                     },
                     error:function (error){
@@ -190,7 +190,7 @@
                     }
                 });
             });
-            $.ajax('#confirmation_transaction_form').click(function (){
+            $('#button_confirm_transaction').click(function (){
                 $.ajax({
                     url: document.getElementById('node_url').value + '/generate/transactions',
                     type: "POST",
@@ -204,7 +204,7 @@
                        // $('recipient_public_key').val('');
                        // $('amount').val('');
                         $('#basic_modal').modal('hide');
-                        $('#success_tarnsaction_modal').modal('show');
+                        $('#success_transaction_modal').modal('show');
                     },
                     error:function (error){
                         console.log(error)

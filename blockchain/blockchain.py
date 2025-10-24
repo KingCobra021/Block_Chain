@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,jsonify
 from argparse import ArgumentParser
 from datetime import time
+from flask_cors import CORS
 
 class Blockchain:
     def __init__(self):
@@ -26,6 +27,7 @@ Blockchain = Blockchain()
 
 #initiating the node
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/") # adds the root page/home page route to flask
 # everything under the route belongs to the route until new route is added
@@ -37,6 +39,12 @@ def index():
 
 def Home():
     return index()
+
+@app.route("/generate/transactions", methods=["POST"])
+
+def generate_transaction():
+    response = {"massage":"ok"}
+    return jsonify(response),201
 
 if __name__ == '__main__':
 
